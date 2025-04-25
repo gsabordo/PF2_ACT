@@ -1,0 +1,201 @@
+
+<!--
+README:
+Aesthetic Browser Environment Dashboard
+This web app showcases browser and page information, navigation controls, and adaptive background colors.
+Styled with a soft feminine theme and a modern aesthetic for a polished look.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Browser Dashboard</title>
+  <style>
+    :root {
+      --primary: #f48fb1;
+      --secondary: #fce4ec;
+      --accent: #ba68c8;
+      --text: #4a148c;
+      --background: #fff0f6;
+      --white: #ffffff;
+      --card-bg: #ffffffee;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--background);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 0;
+    }
+
+    header {
+      background: linear-gradient(to right, #f8bbd0, #f48fb1);
+      padding: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      box-shadow: 0 5px 15px rgba(244, 143, 177, 0.4);
+    }
+
+    header img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 4px solid var(--white);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-info h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .profile-info p {
+      margin: 4px 0;
+    }
+
+    main {
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    section {
+      background-color: var(--card-bg);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 8px rgba(186, 104, 200, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    section:hover {
+      transform: translateY(-4px);
+    }
+
+    h2 {
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      color: var(--accent);
+    }
+
+    .info {
+      margin: 6px 0;
+    }
+
+    button {
+      margin-top: 0.7rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #ec407a;
+    }
+
+    @media (max-width: 768px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="sss.png" alt="Profile Picture" />
+  <div class="profile-info">
+    <h1>Gladys Sabordo</h1>
+    <p><strong>Sex:</strong> Female</p>
+    <p><strong>Address:</strong> San Antonio, Tigaon, Camarines Sur</p>
+    <p><strong>Course:</strong> BSIT 2B</p>
+    <p><strong>School:</strong> Partido State University</p>
+    <p><strong>Semester:</strong> 2nd Sem, AY 2024–2025</p>
+    <p><strong>Subject:</strong> Event Driven Programming</p>
+    <p><strong>Instructor:</strong> Arjay Abio</p>
+  </div>
+</header>
+
+<main>
+  <section id="browser-info">
+    <h2>Browser Info</h2>
+    <div class="info" id="browserName"></div>
+    <div class="info" id="platform"></div>
+    <div class="info" id="javaEnabled"></div>
+    <div class="info" id="screenResolution"></div>
+    <div class="info" id="availableScreen"></div>
+    <div class="info" id="colorDepth"></div>
+  </section>
+
+  <section id="page-info">
+    <h2>Page Info & Controls</h2>
+    <div class="info" id="currentURL"></div>
+    <div class="info" id="hostname"></div>
+    <div class="info" id="pageTitle"></div>
+    <button onclick="updateTitle()">Change Page Title</button>
+  </section>
+
+  <section id="navigation-controls">
+    <h2>Navigation</h2>
+    <button onclick="window.location.reload()">Reload</button>
+    <button onclick="window.location.href='https://www.example.com'">Go to example.com</button>
+    <button onclick="window.history.back()">Back</button>
+    <button onclick="window.history.forward()">Forward</button>
+  </section>
+</main>
+
+<script>
+  // Display browser info
+  document.getElementById("browserName").textContent = "Browser: " + navigator.appName + " " + navigator.appVersion;
+  document.getElementById("platform").textContent = "Platform: " + navigator.platform;
+  document.getElementById("javaEnabled").textContent = "Java Enabled: " + navigator.javaEnabled();
+  document.getElementById("screenResolution").textContent = "Screen: " + screen.width + "x" + screen.height;
+  document.getElementById("availableScreen").textContent = "Available: " + screen.availWidth + "x" + screen.availHeight;
+  document.getElementById("colorDepth").textContent = "Color Depth: " + screen.colorDepth;
+
+  // Page info
+  document.getElementById("currentURL").textContent = "URL: " + document.URL;
+  document.getElementById("hostname").textContent = "Hostname: " + location.hostname;
+  document.getElementById("pageTitle").textContent = "Title: " + document.title;
+
+  function updateTitle() {
+    const newTitle = prompt("Enter new title:");
+    if (newTitle) {
+      document.title = newTitle;
+      document.getElementById("pageTitle").textContent = "Title: " + newTitle;
+    }
+  }
+
+  function updateBackground() {
+    const width = window.innerWidth;
+    if (width < 600) {
+      document.body.style.backgroundColor = "#f3e5f5"; // Light violet
+    } else if (width < 992) {
+      document.body.style.backgroundColor = "#f8bbd0"; // Light pink
+    } else {
+      document.body.style.backgroundColor = "#fce4ec"; // Rosy pink
+    }
+  }
+
+  window.addEventListener("load", updateBackground);
+  window.addEventListener("resize", updateBackground);
+</script>
+
+</body>
+</html>
