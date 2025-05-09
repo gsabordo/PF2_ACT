@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DOM Traversal Interactive</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: linear-gradient(to right, #ffe6f0, #ffccff);
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: background 2s ease-in-out;
+    }
+    h1 {
+      font-size: 2.8em;
+      margin-bottom: 30px;
+      color: #d63384;
+    }
+    .grandparent, .parent, .child {
+      margin: 10px;
+      padding: 15px;
+      border-radius: 15px;
+      width: 300px;
+      text-align: center;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+    .grandparent {
+      background-color: #ffd6e0;
+      border: 2px solid #ff99c8;
+    }
+    .parent {
+      background-color: #ffc2e2;
+      border: 2px solid #ff66b2;
+      margin: 10px auto;
+    }
+    .child {
+      background-color: #ffe6f7;
+      border: 2px solid #ffb3d1;
+      margin: 6px auto;
+    }
+    .highlight {
+      box-shadow: 0 0 15px 5px #ff69b4;
+      transform: scale(1.05);
+    }
+    .button-container {
+      margin-top: 30px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
+    button {
+      background: linear-gradient(to right, #ff9a9e, #fad0c4);
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      font-size: 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s, transform 0.2s;
+    }
+    button:hover {
+      background: linear-gradient(to right, #fbc2eb, #a18cd1);
+      transform: translateY(-2px);
+    }
+    button:active {
+      transform: scale(0.97);
+    }
+  </style>
+</head>
+<body>
+  <h1>DOM Traversal Interactive</h1>
+
+  <div class="grandparent" id="grandparent">
+    Grandparent
+    <div class="parent">
+      Parent 1
+      <div class="child">Child 1</div>
+      <div class="child">Child 2</div>
+    </div>
+    <div class="parent">
+      Parent 2
+      <div class="child">Child 3</div>
+      <div class="child">Child 4</div>
+    </div>
+  </div>
+
+  <div class="button-container">
+    <button onclick="traverseDown()">Traverse Down</button>
+    <button onclick="traverseUp()">Traverse Up</button>
+    <button onclick="traverseNextSibling()">Traverse Next Sibling</button>
+    <button onclick="traversePrevSibling()">Traverse Previous Sibling</button>
+    <button onclick="addChild()">Add Child</button>
+    <button onclick="deleteCurrent()">Delete Current</button>
+  </div>
+
+  <!-- ✅ Back Button -->
+  <div class="button-container">
+    <a href="index.html">
+      <button>← Back to Home</button>
+    </a>
+  </div>
+
+  <script>
+    let selected = null;
+    const body = document.body;
+    const gradients = [
+      'linear-gradient(to right, #ffe6f0, #ffccff)',
+      'linear-gradient(to right, #fbc2eb, #a6c1ee)',
+      'linear-gradient(to right, #fad0c4, #ffd1ff)',
+      'linear-gradient(to right, #fddb92, #d1fdff)',
+      'linear-gradient(to right, #fbc2eb, #a18cd1)'
+    ];
+    let gradientIndex = 0;
+
+    function rotateBackground() {
+      gradientIndex = (gradientIndex + 1) % gradients.length;
+      body.style.background = gradients[gradientIndex];
+    }
+
+    function attachClickHandlers() {
+      document.querySelectorAll('.grandparent, .parent, .child').forEach(el => {
+        el.addEventListener('click', function (e) {
+          e.stopPropagation();
+          selectNode(this);
+        });
+      });
+    }
+
+    function selectNode(node) {
+      if (selected) selected.classList.remove('highlight');
+      selected = node;
+      selected.classList.add('highlight');
+      rotateBackground();
+    }
+
+    function traverseDown() {
+      if (!selected) return;
+      const children = [...selected.children].filter(child =>
+        child.classList.contains('parent') || child.classList.contains('child')
+      );
+      if (children.length > 0) selectNode(children[0]);
+    }
+
+    function traverseUp() {
+      if (!selected) return;
+      const parent = selected.parentElement.closest('.grandparent, .parent');
+      if (parent) selectNode(parent);
+    }
+
+    function traverseNextSibling() {
+      if (!selected) return;
+      let sibling = selected.nextElementSibling;
+      while (sibling && !sibling.classList.contains('parent') && !sibling.classList.contains('child')) {
+        sibling = sibling.nextElementSibling;
+      }
+      if (sibling) selectNode(sibling);
+    }
+
+    function traversePrevSibling() {
+      if (!selected) return;
+      let sibling = selected.previousElementSibling;
+      while (sibling && !sibling.classList.contains('parent') && !sibling.classList.contains('child')) {
+        sibling = sibling.previousElementSibling;
+      }
+      if (sibling) selectNode(sibling);
+    }
+
+    function addChild() {
+      if (!selected) return;
+      if (selected.classList.contains('grandparent')) {
+        const newParent = document.createElement('div');
+        newParent.className = 'parent';
+        newParent.innerHTML = 'New Parent<div class="child">New Child A</div><div class="child">New Child B</div>';
+        selected.appendChild(newParent);
+        attachClickHandlers();
+      } else if (selected.classList.contains('parent')) {
+        const newChild = document.createElement('div');
+        newChild.className = 'child';
+        newChild.textContent = 'New Child';
+        selected.appendChild(newChild);
+        attachClickHandlers();
+      } else {
+        alert("Cannot add child to a child node.");
+      }
+    }
+
+    function deleteCurrent() {
+      if (!selected) return;
+      if (selected.classList.contains('grandparent')) {
+        alert("Cannot delete the grandparent node.");
+        return;
+      }
+      const nodeToRemove = selected;
+      traverseUp();
+      nodeToRemove.remove();
+    }
+
+    attachClickHandlers();
+  </script>
+</body>
+</html>
